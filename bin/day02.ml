@@ -7,15 +7,15 @@ let split_and_strip ~on x = x |> String.split ~on:on |> List.map ~f:String.strip
 let list_to_pair l =
     l |> List.hd_exn, l |> List.rev |> List.hd_exn;;
 
-let parse_game_id part =
-    part
-    |> split_and_strip ~on:' '
-    |> List.rev
-    |> List.hd_exn
-    |> int_of_string;;
+(* let parse_game_id part = *)
+(*     part *)
+(*     |> split_and_strip ~on:' ' *)
+(*     |> List.rev *)
+(*     |> List.hd_exn *)
+(*     |> int_of_string;; *)
 
 type reveal = { r: int; g: int; b: int };;
-type game = { id: int; required: reveal };;
+type game = { (* id: int; *) required: reveal };;
 
 let parse_pull pull_str =
     let count_color = pull_str
@@ -55,12 +55,12 @@ let parse_game game_str =
     |> split_and_strip ~on:':'
     |> list_to_pair 
     in
-    let game_id_str = fst split 
-    in
+    (* let game_id_str = fst split  *)
+    (* in *)
     let reveals_str = snd split
     in
     { 
-        id = parse_game_id game_id_str; 
+        (* id = parse_game_id game_id_str;  *)
         required = (
             reveals_str 
             |> parse_reveals 
@@ -69,13 +69,18 @@ let parse_game game_str =
     }
 ;;
 
-let valid_reveal check = 12 >= check.r && 13 >= check.g && 14 >= check.b;;
- 
+(* let valid_reveal check = 12 >= check.r && 13 >= check.g && 14 >= check.b;; *)
+(* let () = lines *)
+(*     |> List.map ~f:parse_game *)
+(*     (* |> List.iter ~f:(fun g -> printf "%d %d %d %d\n" g.id g.max.r g.max.g g.max.b);; *) *)
+(*     |> List.filter ~f:(fun g -> valid_reveal g.required) *)
+(*     (* |> List.iter ~f:(fun g -> printf "%d\n" g.id) *) *)
+(*     |> List.map ~f:(fun g -> g.id) *)
+(*     |> List.fold ~init:0 ~f:(+) *)
+(*     |> printf "%d\n";; *)
+
 let () = lines
     |> List.map ~f:parse_game
-    (* |> List.iter ~f:(fun g -> printf "%d %d %d %d\n" g.id g.max.r g.max.g g.max.b);; *)
-    |> List.filter ~f:(fun g -> valid_reveal g.required)
-    (* |> List.iter ~f:(fun g -> printf "%d\n" g.id) *)
-    |> List.map ~f:(fun g -> g.id)
+    |> List.map ~f:(fun g -> g.required.r * g.required.g * g.required.b)
     |> List.fold ~init:0 ~f:(+)
     |> printf "%d\n";;
