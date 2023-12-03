@@ -4,8 +4,7 @@ let lines = In_channel.(input_lines stdin)
 
 let split_and_strip ~on x = x |> String.split ~on:on |> List.map ~f:String.strip
 
-let list_to_pair l =
-    l |> List.hd_exn, l |> List.rev |> List.hd_exn;;
+let list_to_pair l = l |> List.hd_exn, l |> List.rev |> List.hd_exn;;
 
 (* let parse_game_id part = *)
 (*     part *)
