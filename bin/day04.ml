@@ -14,7 +14,7 @@ let split_on_whitespace line =
     |> Re.split whitespace_re
 ;;
 
-let parse_line line =
+let parse_gains line =
     let result = Re.exec line_re line
     in
     let have = (Re.Group.get result 2) |> split_on_whitespace |> List.map ~f:int_of_string;
@@ -26,12 +26,20 @@ let parse_line line =
 ;;
 
 let gains = lines
-    |> List.map ~f:parse_line
+    |> List.map ~f:parse_gains
+    |> Array.of_list
+;;
 
-let () = gains
-    |> List.filter ~f:((<>) 0)
-    |> List.map ~f:((+) (-1))
-    |> List.map ~f:(Int.pow 2)
-    |> List.fold ~f:(+) ~init:0
+let rec calc i = 
+    if i >= (Array.length gains) then 0 else
+    List.init (Array.get gains i) ~f:(fun x -> x + i + 1)
+        |> List.map ~f:calc
+        |> List.fold ~init:0 ~f:(+)
+        |> (+) 1
+;;
+
+let () = List.init (Array.length gains) ~f:(fun x -> x)
+    |> List.map ~f:calc
+    |> List.fold ~init:0 ~f:(+)
     |> printf "%d\n"
 ;;
