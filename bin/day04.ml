@@ -14,28 +14,24 @@ let split_on_whitespace line =
     |> Re.split whitespace_re
 ;;
 
-type card = { have: int list; want: int list };;
 let parse_line line =
-    print_endline line;
     let result = Re.exec line_re line
     in
-    {
-        have = (Re.Group.get result 2) |> split_on_whitespace |> List.map ~f:int_of_string;
-        want = (Re.Group.get result 3) |> split_on_whitespace |> List.map ~f:int_of_string;
-    }
+    let have = (Re.Group.get result 2) |> split_on_whitespace |> List.map ~f:int_of_string;
+    in
+    let want = (Re.Group.get result 3) |> split_on_whitespace |> List.map ~f:int_of_string;
+    in
+    have
+    |> List.count ~f:(fun h -> List.exists want ~f:(fun w -> w = h))
 ;;
 
-let card_score card =
-    card.have
-    |> List.count ~f:(fun h -> List.exists card.want ~f:(fun w -> w = h))
-    |> function
-        | 0 -> 0
-        | i -> i - 1
-    |> Int.pow 2
-
-let () = lines
+let gains = lines
     |> List.map ~f:parse_line
-    |> List.map ~f:card_score
+
+let () = gains
+    |> List.filter ~f:((<>) 0)
+    |> List.map ~f:((+) (-1))
+    |> List.map ~f:(Int.pow 2)
     |> List.fold ~f:(+) ~init:0
-    |> printf "%d\n";
+    |> printf "%d\n"
 ;;
