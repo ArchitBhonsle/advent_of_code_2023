@@ -8,23 +8,32 @@ let times_re = compile_pcre {|Time:((?:\s+\d+)*)|};;
 let distances_re = compile_pcre {|Distance:((?:\s+\d+)*)|};;
 
 let whitespace_re = compile_pcre {|\s+|}
-let split_into_ints str = str
+let parse str = str
     |> String.strip
     |> Re.split whitespace_re
-    |> List.map ~f:int_of_string
+    |> String.concat
+    |> int_of_string
 
-let times = input |> (Re.exec times_re) |> (fun m -> Re.Group.get m 1) |> split_into_ints;;
-let distances = input |> (Re.exec distances_re) |> (fun m -> Re.Group.get m 1) |> split_into_ints;;
+let find_and_parse re input = input |> (Re.exec re) |> (fun m -> Re.Group.get m 1) |> parse;;
+let time = input |> (find_and_parse times_re);;
+let distance = input |> (find_and_parse distances_re);;
 
-let ways = List.map2_exn times distances ~f:(fun t d ->
-    List.init (t + 1) ~f:(fun x -> x)
-    |> List.count ~f:(fun x -> (x * (t - x)) > d)
-)
+let solve time distance =
+    let a = 1.
+    in 
+    let b = -. (float_of_int time)
+    in
+    let c = (float_of_int distance)
+    in
+    let d = (b *. b) -. (4. *. a *. c)
+    in
+    if (Float.compare d 0.) <= 0 then 0
+    else
+        let v = ((-.b +. (Float.sqrt d)) /. (2. *. a))
+        in
+        let u = ((-.b -. (Float.sqrt d)) /. (2. *. a))
+        in
+        int_of_float (Float.round_down v) - int_of_float (Float.round_up u) + 1
 ;;
 
-let () = ways
-    |> List.fold ~init:1 ~f:( * )
-    |> printf "%d\n"
-;;
-
-(* x * (t - x) > d *)
+let () = printf "%d\n" (solve time distance);;
