@@ -12,7 +12,6 @@ type translation =
   ; src : range
   }
 
-(* read seeds *)
 let seeds_re = {|seeds:\s+((?:\d+\s+)*)|} |> Re.Pcre.re |> Re.compile
 
 let rec into_pairs l =
@@ -33,7 +32,6 @@ let seeds =
   |> List.map ~f:(fun p -> { beg = fst p; len = snd p })
 ;;
 
-(* read stages *)
 let stages_re = {|\w+\-to\-\w+\s+map\:\n((?:\d+\s*)+\n?)|} |> Re.Pcre.re |> Re.compile
 
 let parse_stages_str stages_str =
@@ -55,7 +53,6 @@ let stages =
   |> List.map ~f:parse_stages_str
 ;;
 
-(* break `this` range into at most 3 parts where none intersect `using`s endpoints *)
 let break_range this using =
   let a_end = using.beg + using.len in
   let b_end = this.beg + this.len in
@@ -67,7 +64,6 @@ let break_range this using =
   |> List.filter ~f:(fun r -> r.len > 0)
 ;;
 
-(* translate `this` range using `translations`*)
 let translate_range translations this =
   translations
   |> List.find ~f:(fun t -> t.src.beg <= this.beg && this.beg <= t.src.beg + t.src.len)
@@ -76,7 +72,6 @@ let translate_range translations this =
   | None -> this
 ;;
 
-(* run the simulation *)
 let final =
   stages
   |> List.fold ~init:seeds ~f:(fun curr stage ->
