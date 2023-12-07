@@ -11,11 +11,16 @@ let pairs =
 ;;
 
 let hand_type hand =
+  let jokers = hand |> List.count ~f:(Char.equal 'J') in
   hand
+  |> List.filter ~f:(fun c -> not (Char.equal 'J' c))
   |> List.sort_and_group ~compare:Char.compare
   |> List.map ~f:List.length
   |> List.sort ~compare:Int.compare
   |> List.rev
+  |> (function
+       | [] -> [ 5 ]
+       | hd :: rest -> (hd + jokers) :: rest)
   |> function
   | [ 5 ] -> 7
   | [ 4; 1 ] -> 6
@@ -27,7 +32,7 @@ let hand_type hand =
   | _ -> raise (Invalid_argument "Should not be possible")
 ;;
 
-let cards = [ '2'; '3'; '4'; '5'; '6'; '7'; '8'; '9'; 'T'; 'J'; 'Q'; 'K'; 'A' ]
+let cards = [ 'J'; '2'; '3'; '4'; '5'; '6'; '7'; '8'; '9'; 'T'; 'Q'; 'K'; 'A' ]
 let card_value card = fst (List.findi_exn cards ~f:(fun _ c -> Char.equal card c))
 
 let compare_hands a b =
