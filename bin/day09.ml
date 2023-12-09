@@ -10,8 +10,8 @@ let rec extrapolate nums =
   if nums |> List.for_all ~f:(Int.equal 0)
   then 0
   else
-    List.last_exn nums
-    + extrapolate
+    List.hd_exn nums
+    - extrapolate
         (List.zip_exn (nums |> List.rev |> List.tl_exn |> List.rev) (nums |> List.tl_exn)
          |> List.map ~f:(fun (a, b) -> b - a))
 ;;
