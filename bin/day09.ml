@@ -11,7 +11,7 @@ let rec extrapolate nums =
   then 0
   else
     List.hd_exn nums
-    - extrapolate
+    + extrapolate
         (List.zip_exn (nums |> List.rev |> List.tl_exn |> List.rev) (nums |> List.tl_exn)
          |> List.map ~f:(fun (a, b) -> b - a))
 ;;
