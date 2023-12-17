@@ -1,4 +1,5 @@
 (executables
- (public_names day01 day02 day03 day04 day05 day06 day07 day08 day09 day16)
- (names day01 day02 day03 day04 day05 day06 day07 day08 day09 day16)
+ (public_names day01 day02 day03 day04 day05 day06 day07 day08 day09 day15 day16)
+ (names day01 day02 day03 day04 day05 day06 day07 day08 day09 day15 day16)
+ (preprocess (pps ppx_compare ppx_sexp_conv ppx_hash))
  (libraries advent_of_code_2023 re core))
