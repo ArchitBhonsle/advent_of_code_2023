@@ -93,13 +93,23 @@ let rec sim i j dir =
     helper i j dir layout.(i).(j))
 ;;
 
-let () = sim 0 0 Right
-let touched = Array.make_matrix ~dimx:nrows ~dimy:ncols 0
-let () = Hashtbl.iter_keys visited ~f:(fun k -> touched.(k.i).(k.j) <- 1)
+let run_sim i j dir =
+  Hashtbl.clear visited;
+  sim i j dir;
+  let touched = Array.make_matrix ~dimx:nrows ~dimy:ncols 0 in
+  Hashtbl.iter_keys visited ~f:(fun k -> touched.(k.i).(k.j) <- 1);
+  touched |> Array.map ~f:(Array.fold ~init:0 ~f:( + )) |> Array.fold ~init:0 ~f:( + )
+;;
 
 let () =
-  touched
-  |> Array.map ~f:(Array.fold ~init:0 ~f:( + ))
-  |> Array.fold ~init:0 ~f:( + )
-  |> printf "%d\n"
+  let max = ref 0 in
+  for i = 0 to nrows do
+    max := Int.max !max (run_sim i 0 Right);
+    max := Int.max !max (run_sim i (ncols - 1) Left)
+  done;
+  for j = 0 to ncols do
+    max := Int.max !max (run_sim 0 j Down);
+    max := Int.max !max (run_sim (nrows - 1) j Up)
+  done;
+  printf "%d\n" !max
 ;;
